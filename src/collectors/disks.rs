@@ -19,6 +19,7 @@ pub async fn main(tx: mpsc::Sender<Data>, refr_tx: mpsc::Sender<Kind>) -> Result
 
         let mut disc_vec = Vec::new();
 
+
         if let Some(disks) = DISKS.get(){
             let disks = match disks.read(){
                 Ok(data) => data,

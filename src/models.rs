@@ -1,4 +1,34 @@
-use serde::{Serialize, Deserialize};
+use iceoryx2::prelude::ZeroCopySend;
+use serde::{Deserialize, Serialize};
+
+use crate::MAX_SIZE;
+
+#[derive(Debug, Serialize, Deserialize, ZeroCopySend, Default)]
+#[repr(C)]
+pub enum TelemetryKind{
+    Meta,
+    Disk,
+    Networks,
+    Sockets,
+    Cpus,#[default]
+    Process,
+    Memory
+}
+#[derive(Debug, ZeroCopySend)]
+#[repr(C)]
+pub struct Telemetry{
+    pub kind: TelemetryKind,
+    pub data: [u8; MAX_SIZE]
+}
+
+impl Default for Telemetry {
+    fn default() -> Self {
+        Self {
+            kind: TelemetryKind::default(),
+            data: [0u8; MAX_SIZE] 
+        }
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Data{
@@ -8,7 +38,8 @@ pub enum Data{
     Sockets(Vec<Sockets>),
     Cpus(Vec<Cpus>),
     Process(Vec<Process>),
-    Memory(Memory)
+    Memory(Memory),
+    ShuttingDown
 }
 
 #[derive(Serialize, Deserialize, Debug)]
